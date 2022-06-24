@@ -68,7 +68,7 @@ body {
 }
 
 .search-content {
-    display: none;
+    /* display: none; */
     position: absolute;
     background-color: rgba(45, 45, 45, 0.7);
     min-width: 300px;

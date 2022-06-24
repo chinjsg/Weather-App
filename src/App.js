@@ -6,6 +6,7 @@ import './style.css';
 import onecall from "./testData/onecall"
 
 function App() {
+
     const [city, setCity] = useState({})
     const [data, setData] = useState(onecall)
     const [options, setOptions] = useState([]) // replace geocoding parameter
@@ -22,9 +23,9 @@ function App() {
         if (searchString.length > 0) {
             const geo_url = `http://api.openweathermap.org/geo/1.0/direct?q=${searchString}&limit=5&appid=${key}`
             fetch(geo_url)
-            .then(response => response.json())
-            .then(response => setOptions(response))
-            .catch(err => console.error(err));
+                .then(response => response.json())
+                .then(response => setOptions(response))
+                .catch(err => console.error(err));
         } else {
             setOptions([])
         }
@@ -37,9 +38,12 @@ function App() {
     }
 
     function changeCity(lat, lon) {
-        // console.log(`City changing to lat: ${lat} lon: ${lon}`)
-        const weather_url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}`
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,alerts&appid=${key}`
+        console.log(`City changing to lat: ${lat} lon: ${lon}`)
+        const weather_url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,alerts&appid=${key}`
+        // fetch(weather_url)
+        //     .then(response => response.json())
+        //     .then(response => setData(response))
+        //     .catch(err => console.error(err));
     }
 
     function convertUnixToDate(unix_timestamp) {
@@ -51,9 +55,6 @@ function App() {
     // function setWeatherData(result) {
     //     weatherData = result
     // }
-
-    // const weather_url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}`
-    // const geo_url = `http://api.openweathermap.org/geo/1.0/direct?q=Portland&limit=5&appid=${key}`
     
     // fetch(url)
     //     .then(response => response.json())

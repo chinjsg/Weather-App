@@ -1,12 +1,12 @@
 export default function Forecast(props) {
-    const dailyElements = props.daily.map(forecast => {
+    const dailyElements = props.daily.map((forecast, index) => {
         const dateObject = props.dateFunc(forecast.dt)
         const day = dateObject.toLocaleString('en-us', {weekday:'long'})
         const icon = forecast.weather[0].icon
         const {max, min} = forecast.temp
 
         return (
-            <div className="daily-element">
+            <div key={index} className="daily-element">
                 <p className="daily-day">{day}</p>
                 <img src={`http://openweathermap.org/img/wn/${icon}@2x.png`} className="daily-weather-icon"/>
                 <div className="daily-range">

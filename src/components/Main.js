@@ -18,18 +18,18 @@ export default function Main(props) {
         }
     }
 
-    const hourlyElements = hourlyData.map(hour => {
+    const hourlyElements = hourlyData.map((hour, index) => {
         const dateObject = props.dateFunc(hour.dt)
         const time = getTimeFromDate(dateObject, false)
         const temp = hour.temp
         const icon = hour.weather[0].icon
 
         return (
-            <div className="hourly-element">
-                    <p>{time}</p>
-                    <img src={`http://openweathermap.org/img/wn/${icon}@2x.png`} className="current-forecast-icon"/>
-                    <p>{Math.round(temp)}°F</p>
-                </div>
+            <div key={index} className="hourly-element">
+                <p>{time}</p>
+                <img src={`http://openweathermap.org/img/wn/${icon}@2x.png`} className="current-forecast-icon"/>
+                <p>{Math.round(temp)}°F</p>
+            </div>
         )
     })
 

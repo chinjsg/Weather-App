@@ -3,6 +3,7 @@ export default function Main(props) {
     const {description, icon} = props.today.weather[0]
     const hourlyData = props.todayForecast
     const {min, max} = props.todayRange.temp
+    const unit = props.isMetric ? "C" : "F"
 
     function getTimeFromDate(dateObject, hasMinutes) {
         let hours = dateObject.getHours()
@@ -18,6 +19,10 @@ export default function Main(props) {
         }
     }
 
+    function convertToF(celsius) {
+        return (celsius * 9/5) + 32
+    }
+
     const hourlyElements = hourlyData.map((hour, index) => {
         const dateObject = props.dateFunc(hour.dt)
         const time = getTimeFromDate(dateObject, false)
@@ -28,7 +33,7 @@ export default function Main(props) {
             <div key={index} className="hourly-element">
                 <p>{time}</p>
                 <img src={`http://openweathermap.org/img/wn/${icon}@2x.png`} className="current-forecast-icon"/>
-                <p>{Math.round(temp)}°F</p>
+                <p>{Math.round(props.isMetric ? temp : convertToF(temp))}°{unit}</p>
             </div>
         )
     })
@@ -47,12 +52,12 @@ export default function Main(props) {
                     <p className="weather-condition">{description}</p>
                 </div>
                 <div className="temperature-range">
-                <p className="temperature-max">{Math.round(max)}°F</p>
-                    <p className="temperature-min">{Math.round(min)}°F</p>
+                <p className="temperature-max">{Math.round(props.isMetric ? max : convertToF(max))}°{unit}</p>
+                    <p className="temperature-min">{Math.round(props.isMetric ? min : convertToF(min))}°{unit}</p>
                 </div>
                 <div className="temperature-main">
-                    <p className="temperature-current">{Math.round(temp)}°F</p>
-                    <p className="temperature-apparent">Feels like {Math.round(feels_like)}°F</p>
+                    <p className="temperature-current">{Math.round(props.isMetric ? temp : convertToF(temp))}°{unit}</p>
+                    <p className="temperature-apparent">Feels like {Math.round(props.isMetric ? feels_like : convertToF(feels_like))}°{unit}</p>
                 </div>
             </div>
 

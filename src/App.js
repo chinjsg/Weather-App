@@ -1,22 +1,38 @@
-import {useState} from "react"
+import {useState, useEffect} from "react"
 import Location from "./components/Location"
 import Main from "./components/Main"
 import Forecast from "./components/Forecast"
 import './style.css';
-import onecall from "./testData/onecall"
 
 function App() {
+    const key = "";
 
-    const [city, setCity] = useState({})
-    const [data, setData] = useState(onecall)
-    const [options, setOptions] = useState([]) // replace geocoding parameter
+    const default_city = {
+        "name": "Tucson",
+        "local_names": {
+            "en": "Tucson",
+            "he": "טוסון",
+            "ru": "Тусон",
+            "uk": "Тусон",
+            "ar": "توسان"
+        },
+        "lat": 32.2228765,
+        "lon": -110.9748477,
+        "country": "US",
+        "state": "Arizona"
+    }
+
+    const [city, setCity] = useState(default_city)
+    const [data, setData] = useState({})
+    const [options, setOptions] = useState([])
     const [searchText, setSearchText] = useState("")
-    const [focused, setFocused] = useState(false) 
+    const [focused, setFocused] = useState(false)
+    const [isMetric, setIsMetric] = useState(true)
 
     const onFocus = () => setFocused(true)
     const onBlur = () => setFocused(false)
 
-    const key = "";
+    useEffect(() => changeCity(city), [])
 
     function searchChange(event) {
         const searchString = event.target.value
@@ -37,13 +53,22 @@ function App() {
         setOptions([])
     }
 
-    function changeCity(lat, lon) {
+    function changeCity(location) {
+        const {lat, lon} = location
+
         console.log(`City changing to lat: ${lat} lon: ${lon}`)
         const weather_url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,alerts&appid=${key}`
-        // fetch(weather_url)
-        //     .then(response => response.json())
-        //     .then(response => setData(response))
-        //     .catch(err => console.error(err));
+        fetch(weather_url)
+            .then(response => response.json())
+            .then(response => setData(response))
+            .catch(err => console.error(err));
+        
+        clearSearch()
+        setCity(location)
+    }
+
+    function handleToggle() {
+        setIsMetric(!isMetric)
     }
 
     function convertUnixToDate(unix_timestamp) {
@@ -51,21 +76,15 @@ function App() {
         return new Date(milliseconds)
     }
 
-    // const weatherData = {}
-    // function setWeatherData(result) {
-    //     weatherData = result
-    // }
-    
-    // fetch(url)
-    //     .then(response => response.json())
-    //     .then(response => console.log(response))
-    //     .catch(err => console.error(err));
-
     return (
+        Object.keys(data).length === 0
+        ? 
+        <div className="container">loading...</div>
+        :
         <div className="container">
-            <Location options={options} search={searchChange} changeCity={changeCity} text={searchText} clearSearch={clearSearch} focused={focused} onFocus={onFocus} onBlur={onBlur}/>
-            <Main today={data.current} todayForecast={data.hourly.slice(1, 26)} todayRange={data.daily[0]} dateFunc={convertUnixToDate}/>
-            <Forecast daily={data.daily.slice(1)} dateFunc={convertUnixToDate}/>
+            <Location location={city} isMetric={isMetric} handleToggle={handleToggle} options={options} search={searchChange} changeCity={changeCity} text={searchText} clearSearch={clearSearch} focused={focused} onFocus={onFocus} onBlur={onBlur}/>
+            <Main today={data.current} todayForecast={data.hourly.slice(1, 26)} todayRange={data.daily[0]} isMetric={isMetric} dateFunc={convertUnixToDate}/>
+            <Forecast daily={data.daily.slice(1)} isMetric={isMetric} dateFunc={convertUnixToDate}/>
         </div>
     );
 }
